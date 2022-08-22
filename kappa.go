@@ -2,7 +2,7 @@ package kappa
 //河童框架
 import (
 	"github.com/gin-gonic/gin"
-	"kappa/inits"
+	"github.com/517962189/Kappa/inits"
 )
 
 type KappaServer struct {
