@@ -1,8 +1,8 @@
 package kappa
 //河童框架
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/517962189/Kappa/inits"
+	"github.com/gin-gonic/gin"
 )
 
 type KappaServer struct {
@@ -13,6 +13,11 @@ func NewKappaServer() *KappaServer {
 	return &KappaServer{
 		gin.Default(),
 	}
+}
+
+// 获取原生gin
+func (s *KappaServer) Gin() *gin.Engine {
+	return s.engine
 }
 
 func (s *KappaServer) RegisterMiddleWare() {
@@ -39,4 +44,7 @@ func (s *KappaServer) RegisterServer() error{
 	return s.engine.Run(":6615")
 }
 
-
+//注册listern 监听服务
+func (s *KappaServer) Get() error{
+	return s.engine.Run(":6615")
+}
