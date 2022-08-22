@@ -1,0 +1,28 @@
+# redis 连接配置模板
+# 是否支持nacos在线配置: 是
+# 是否支持nacos在线配置修改: 否
+# nacos配置中心 对应nacos配置: Client.Config.ReadonlyDataIds DataId: redis.yaml
+
+# redis标识 identification
+Redis:
+  Host: 10.233.67.26:6379
+  Password: "vdong123"
+  Db: 10
+  MaxIdle: 16
+  MaxActive: 32
+  IdleTimeout: 120
+  DbDriver:
+    SingularTable: true
+    SetMaxIdleConns: 20
+    SetMaxOpenConns: 100
+    SetConnMaxLifetime: 30
+
+# redis标识 identification
+Redis_sentinel:
+  HostArray: redis-h-ra1mea-redis-ha-server-0.redis-h-ra1mea-redis-ha.vd-common-app.svc.cluster.local:26379,redis-h-ra1mea-redis-ha-server-1.redis-h-ra1mea-redis-ha.vd-common-app.svc.cluster.local:26379,redis-h-ra1mea-redis-ha-server-2.redis-h-ra1mea-redis-ha.vd-common-app.svc.cluster.local:26379
+  MasterName: mymaster
+  Password: Vdong123456.
+  Db: 10
+  MaxIdle: 16
+  MaxActive: 32
+  IdleTimeout: 120

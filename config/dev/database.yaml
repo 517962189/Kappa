@@ -1,0 +1,24 @@
+db1:
+  User: root
+  Password:
+  Host: 127.0.0.1
+  Port: 3306
+  Dbname: user
+  Charset: utf8mb4
+  DbDriver:
+    SingularTable: true
+    SetMaxIdleConns: 20
+    SetMaxOpenConns: 100
+    SetConnMaxLifetime: 30
+db2:
+  User: root
+  Password:
+  Host: 127.0.0.1
+  Port: 3306
+  Dbname: user
+  Charset: utf8mb4
+  DbDriver:
+    SingularTable: true
+    SetMaxIdleConns: 20
+    SetMaxOpenConns: 100
+    SetConnMaxLifetime: 30
