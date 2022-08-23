@@ -2,6 +2,7 @@ package inits
 
 import (
 	"fmt"
+	"github.com/517962189/Kappa"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,20 +12,20 @@ import (
 	"time"
 )
 
-var DB map[string]*gorm.DB
+const (
+	DbPoolNoFound = "db connect pool not found"
+)
 
-func InitGorm() {
+var GormStorage map[string]*gorm.DB
 
-	DB = make(map[string]*gorm.DB, 0)
-	//初始化DB内存
-	if _, ok := Configs["database"]; !ok {
-		return
-	}
+func loadGormStorage() {
+	GormStorage = make(map[string]*gorm.DB, 0)
+
 	//初始化database配置数据
-	dbConfig := Configs["database"]
+	dbConfig := kappa.KappaInstance.RegisterConfigStorage("database")
 	//多数据库连接
 	for group := range dbConfig.AllSettings() {
-		dns := JoinDns(group, dbConfig)
+		dns := joinDns(group, dbConfig)
 
 		fmt.Println(group, "---", dns)
 		dbConnect, err := gorm.Open(mysql.Open(dns), &gorm.Config{
@@ -44,7 +45,7 @@ func InitGorm() {
 		sqlDb.SetMaxOpenConns(dbConfig.GetInt(strings.Join([]string{group, "DbDriver.SetMaxOpenConns"}, ".")))
 		//超时
 		sqlDb.SetConnMaxLifetime(time.Second * time.Duration(dbConfig.GetInt(strings.Join([]string{group, "DbDriver.SetConnMaxLifetime"}, "."))))
-		DB[group] = dbConnect
+		GormStorage[group] = dbConnect
 	}
 	log.Println("DB connect Successful!")
 }
@@ -52,7 +53,7 @@ func InitGorm() {
 /**
  * key string  多数据库连接 database 数据库库名称
  */
-func JoinDns(group string, dbConfig *viper.Viper) string {
+func joinDns(group string, dbConfig *viper.Viper) string {
 	dbConfig.GetString(strings.Join([]string{group, "Password"}, "."))
 	user := dbConfig.GetString(strings.Join([]string{group, "User"}, "."))
 	pwd := dbConfig.GetString(strings.Join([]string{group, "Password"}, "."))
@@ -62,4 +63,9 @@ func JoinDns(group string, dbConfig *viper.Viper) string {
 	charset := dbConfig.GetString(strings.Join([]string{group, "Charset"}, "."))
 	dsn := strings.Join([]string{user, ":", pwd, "@tcp(", host, ":", port, ")/", dbName, "?charset=", charset, "&parseTime=True&loc=Local"}, "")
 	return dsn
+}
+
+//提供接口暴露接口
+type GormStorageInterface interface {
+	RegisterDbStorage(group string) *gorm.DB
 }

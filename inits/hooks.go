@@ -13,7 +13,7 @@ func RegisterHooks(userFunc userFunc) {
 }
 
 //运行
-func RunHooks() {
+func init() {
 	if len(userFuncSlice) == 0 {
 		return
 	}
