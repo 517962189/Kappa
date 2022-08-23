@@ -18,11 +18,13 @@ const (
 
 var GormStorage map[string]*gorm.DB
 
-func loadGormStorage() {
+func LoadGormStorage() {
 	GormStorage = make(map[string]*gorm.DB, 0)
-
+	if _, ok := ConfigStorage["database"]; !ok {
+		panic(DbPoolNoFound)
+	}
 	//初始化database配置数据
-	dbConfig := kappa.KappaInstance.RegisterConfigStorage("database")
+	dbConfig := ConfigStorage["database"]
 	//多数据库连接
 	for group := range dbConfig.AllSettings() {
 		dns := joinDns(group, dbConfig)

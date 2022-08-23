@@ -17,6 +17,7 @@ var (
 )
 
 type KappaServer struct {
+	inits.HooksStorageInterface
 	inits.GormStorageInterface
 	inits.ConfigStorageInterface
 	engine *gin.Engine
@@ -48,14 +49,16 @@ func (s *KappaServer)RegisterDbStorage(group string) *gorm.DB {
 	return inits.GormStorage[group]
 }
 
-
+func (s *KappaServer)RegisterHooksStorage(userFunc inits.UserFunc) {
+	inits.UserFuncSlice = append(inits.UserFuncSlice, userFunc)
+}
 
 // 获取原生gin
 func (s *KappaServer) Gin() *gin.Engine {
 	return s.engine
 }
 
-func (s *KappaServer) registerMiddleWare() {
+func (s *KappaServer) loadMiddleWare() {
 	globalMiddleWare := inits.NewMiddleWare().GetGlobal()
 	//路由加载中间件
 	if len(globalMiddleWare) > 0 {
@@ -63,18 +66,36 @@ func (s *KappaServer) registerMiddleWare() {
 	}
 }
 
+
+func (s *KappaServer) loadHookStorage(){
+
+	if len(inits.UserFuncSlice) == 0 {
+		return
+	}
+
+	for _, function := range inits.UserFuncSlice {
+		err := function()
+		if err != nil{
+			panic(err)
+		}
+	}
+}
+
 func (s *KappaServer) Run(addr ...string){
-
-	//初始化DB
-	inits.loadGormStorage()
-
-	//初始化中间件
-	s.registerMiddleWare()
 	//注册listern 监听服务
-
 	if len(addr) == 0{
 		panic(GinAddrEmpty)
 	}
+
+	//初始化DB
+	inits.LoadGormStorage()
+
+	//初始化中间件
+	s.loadMiddleWare()
+
+	//加载钩子数据
+	s.loadHookStorage()
+
 	err := s.engine.Run(addr...)
 	if err != nil{
 		panic(err)
