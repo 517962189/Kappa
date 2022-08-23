@@ -2,7 +2,6 @@ package inits
 
 import (
 	"fmt"
-	"github.com/517962189/Kappa"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
