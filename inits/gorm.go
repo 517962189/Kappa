@@ -1,6 +1,7 @@
 package inits
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -11,8 +12,8 @@ import (
 	"time"
 )
 
-const (
-	DbPoolNoFound = "db connect pool not found"
+var (
+	DbPoolNoFound = errors.New("db connect pool not found")
 )
 
 var GormStorage map[string]*gorm.DB
